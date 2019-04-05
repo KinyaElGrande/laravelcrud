@@ -27,6 +27,7 @@ class BiodataController extends Controller
     public function create()
     {
         //
+        return view('biodata.create');
     }
 
     /**
@@ -38,6 +39,14 @@ class BiodataController extends Controller
     public function store(Request $request)
     {
         //
+        $request->validate([
+          'company_name' => 'required',
+          'description'  => 'required'
+        ]);
+
+        Biodata::create($request->all());
+        return redirect()->route('biodata.index')
+                        ->with('success', 'new biodata created successfully');
     }
 
     /**
@@ -49,6 +58,8 @@ class BiodataController extends Controller
     public function show($id)
     {
         //
+        $biodata = Biodata::find($id);
+        return view('biodata.detail', compact('biodata'));
     }
 
     /**
@@ -60,6 +71,8 @@ class BiodataController extends Controller
     public function edit($id)
     {
         //
+        $biodata = Biodata::find($id);
+        return view('biodata.edit', compact('biodata'));
     }
 
     /**
@@ -72,6 +85,17 @@ class BiodataController extends Controller
     public function update(Request $request, $id)
     {
         //
+        $request->validate([
+          'company_name' => 'required',
+          'description'  => 'required'
+        ]);
+
+        $biodata = Biodata::find($id);
+        $biodata->company_name = $request->get('company_name');
+        $biodata->description = $request->get('description');
+        $biodata->save();
+        return redirect()->route('biodata.index')
+                          ->with('success', 'Biodata updated successfully');
     }
 
     /**
@@ -83,5 +107,9 @@ class BiodataController extends Controller
     public function destroy($id)
     {
         //
+        $biodata = Biodata::find($id);
+        $biodata->delete();
+        return redirect()->route('biodata.index')
+                          ->with('success', 'Biodata deleted successfully');
     }
 }
